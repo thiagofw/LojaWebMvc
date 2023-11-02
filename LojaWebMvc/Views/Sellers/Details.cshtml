@@ -1,15 +1,15 @@
 @model LojaWebMvc.Models.Seller;
 @{
     
-    ViewData["Title"]= "Detalhes";
+    ViewData["Title"]= "Details";
 
 }
 <div class="container">
-    <h2 class="my-4">Detalhes</h2>
+    <h2 class="my-4">Details</h2>
  
     <div class="card">
         <div class="card-header">
-            Detalhes do Cliente:
+            Seller details
         </div>
         <div class="card-body">
             <div class="row">
@@ -21,7 +21,7 @@
                             <li class="list-group-item">Email: @Html.DisplayFor(model => model.Email)</li>
                              <li class="list-group-item">Base Salary: @Html.DisplayFor(model => model.BaseSalary)</li>
                             <li class="list-group-item">Birth Date: @Html.DisplayFor(model => model.BirthDate)</li>
-                            <li class="list-group-item">Department: @Html.DisplayFor(model => model.Department.Id)</li>
+                            <li class="list-group-item">Department: @Html.DisplayFor(model => model.Department.Name)</li>
                             <!-- -->
                         </ul>
                     </div>
@@ -31,8 +31,8 @@
  <div class="mt-4">
         <form asp-action="Delete">
         <input type="hidden" asp-for="Id"/>
-        <input type="submit" class="btn btn-danger" value="Deletar">
-        <a asp-action="Index" class="btn btn-primary">Voltar</a>
+        <input type="submit" class="btn btn-danger" value="Delete">
+        <a asp-action="Index" class="btn btn-primary">Back</a>
         <a asp-action="Edit" class="btn btn-warning" asp-route-id="@Model.Id">Edit</a>
     </form>
 </div>  

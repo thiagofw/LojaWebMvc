@@ -1,6 +1,5 @@
 using LojaWebMvc.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic;
 
 namespace LojaWebMvc.Controllers;
 

@@ -1,9 +1,11 @@
+using System.Diagnostics;
 using LojaWebMvc.Data;
 using LojaWebMvc.Models;
 using LojaWebMvc.Models.ViewModels;
+using LojaWebMvc.Services.Exceptions;
 using LojaWebMvc.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Controllers;
+
 namespace LojaWebMvc.Controllers;
 
 public class SellersController: Controller
@@ -22,9 +24,17 @@ public class SellersController: Controller
         return View(obj);
     }
 
-    public IActionResult Details(int id)
+    public IActionResult Details(int? id)
     {
-        var list = _sellerService.FindById(id);
+        if(id == null)
+        {
+            return RedirectToAction(nameof(Error), new { message = "Id not provided!"});
+        }
+        var list = _sellerService.FindById(id.Value);
+        if(list == null)
+        {
+            return RedirectToAction(nameof(Error), new { message = "Id not found!"});
+        }
         return View(list);
     }
     [HttpGet]
@@ -53,7 +63,7 @@ public class SellersController: Controller
         var obj = _sellerService.FindById(id.Value);
         if(obj == null)
         {
-            return NotFound();
+            return RedirectToAction(nameof(Error), new { message = "Id not provided!"});
         }
         return View(obj);
     }
@@ -63,4 +73,49 @@ public class SellersController: Controller
         _sellerService.Remove(id);
         return RedirectToAction(nameof(Index));
     }
+    
+    [HttpGet]
+    public IActionResult Edit(int? id)
+    {
+        if(id == null)
+        {
+            return RedirectToAction(nameof(Error), new { message = "Id not provided!"});
+        }
+        var obj = _sellerService.FindById(id.Value);
+        if(obj == null)
+        {
+            return RedirectToAction(nameof(Error), new { message = "Id not provided!"});
+        }
+        List<Department> departments = _departmentService.FindAll();
+        SellerFormViewModel viewModel = new SellerFormViewModel{Seller = obj, Departments = departments};
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(int id, Seller seller)
+    {
+        if(id != seller.Id)
+        {
+           return RedirectToAction(nameof(Error), new { message = "Id mismatch!"});
+        }
+        try{
+        _sellerService.Update(seller);
+        return RedirectToAction(nameof(Index));
+        }
+        catch(ApplicationException e)
+        {
+            return RedirectToAction(nameof(Error), new { message = e.Message});
+        }
+        
+    }
+    public IActionResult Error(string message)
+    {
+        var viewModel = new ErrorViewModel{
+            Message = message,
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+        };
+        return View(viewModel);
+    }
+    
 }

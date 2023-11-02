@@ -2,6 +2,8 @@ using LojaWebMvc.Models;
 using LojaWebMvc.Services.Interfaces;
 using LojaWebMvc.Data;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using LojaWebMvc.Services.Exceptions;
 
 namespace LojaWebMvc.Services;
 
@@ -31,7 +33,7 @@ public class SellerService: ISellerService
 
         public Seller FindById(int id)
         {
-            return _vsproContext.Seller.FirstOrDefault(x => x.Id == id);
+            return _vsproContext.Seller.Include(obj => obj.Department).FirstOrDefault(x => x.Id == id);
                // var obj = _vsproContext.Seller.Find(id);
                // return obj;
 
@@ -51,6 +53,22 @@ public class SellerService: ISellerService
             _vsproContext.SaveChanges();
 
         }
+
+        public void Update(Seller seller)
+       {
+            if(!_vsproContext.Seller.Any(x => x.Id == seller.Id))
+            {
+                throw new NotFoundException("Error - Id not found");
+            }
+            try{
+            _vsproContext.Update(seller);
+            _vsproContext.SaveChanges();
+            }catch(DbUpdateConcurrencyException e) 
+            {
+                throw new DbConcurrencyException(e.Message);
+            }
+
+       }
 
 
     

@@ -8,4 +8,7 @@ public interface ISellerService
     Seller FindById(int id);
     Seller Insert(Seller seller);
     void Remove(int id);
+    void Update(Seller seller);
+    
+
 }
