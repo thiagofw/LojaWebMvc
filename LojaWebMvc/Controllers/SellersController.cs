@@ -4,8 +4,9 @@ using LojaWebMvc.Models;
 using LojaWebMvc.Models.ViewModels;
 using LojaWebMvc.Services.Exceptions;
 using LojaWebMvc.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 
+using System.Web;
+using Microsoft.AspNetCore.Mvc;
 namespace LojaWebMvc.Controllers;
 
 public class SellersController: Controller
@@ -47,8 +48,24 @@ public class SellersController: Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Create(Seller seller)
     {
+      
+        if(!ModelState.IsValid)
+        {
+      
+           var message = string.Join(" | ", ModelState.Values
+        .SelectMany(v => v.Errors)
+        .Select(e => e.ErrorMessage));
+            System.Console.WriteLine(ModelState.Values);
+            var departments = _departmentService.FindAll();
+            var viewModel = new SellerFormViewModel{ Seller = seller, Departments = departments};
+           System.Console.WriteLine(message);
+               return View("Create",viewModel);
+        }
+         
+        
         _sellerService.Insert(seller);
         return RedirectToAction("Index");
 
@@ -68,6 +85,7 @@ public class SellersController: Controller
         return View(obj);
     }
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Delete(int id)
     {
         _sellerService.Remove(id);
@@ -95,6 +113,12 @@ public class SellersController: Controller
     [ValidateAntiForgeryToken]
     public IActionResult Edit(int id, Seller seller)
     {
+         if(!ModelState.IsValid)
+        {
+             List<Department> departments = _departmentService.FindAll();
+            var viewModel = new SellerFormViewModel{ Seller = seller, Departments = departments};
+            return View("Views/Sellers/Edit.cshtml",viewModel);
+        }
         if(id != seller.Id)
         {
            return RedirectToAction(nameof(Error), new { message = "Id mismatch!"});

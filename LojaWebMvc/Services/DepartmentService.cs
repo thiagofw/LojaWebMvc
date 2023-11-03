@@ -16,7 +16,7 @@ public class DepartmentService: IDepartmentService
     }
  public List<Department> FindAll()
  {
-    return _vsproContext.Department.OrderBy(x => x.Name).ToList();
+    //return _vsproContext.Department.OrderBy(x => x.Name).ToList();
     var list = _vsproContext.Department;
     var obj = new List<Department>();
     obj = list.Select(x => new Department(
