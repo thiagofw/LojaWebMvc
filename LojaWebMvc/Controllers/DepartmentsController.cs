@@ -12,9 +12,9 @@ public class DepartmentsController: Controller
         _departmentService = departmentService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var obj = _departmentService.FindAll();
+        var obj = await _departmentService.FindAllAsync();
         return View(obj);
     }
 }

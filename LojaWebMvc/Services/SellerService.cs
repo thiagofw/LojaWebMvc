@@ -15,7 +15,7 @@ public class SellerService: ISellerService
         _vsproContext = vsproContext;
     }
 //
-        public List<Seller> FindAll()
+        public Task<List<Seller>> FindAllAsync()
         {
            // return _vsproContext.Seller.OrderBy(x => x.Name).ToList();
             var list = _vsproContext.Seller;
@@ -27,42 +27,44 @@ public class SellerService: ISellerService
                 x.BaseSalary,
                 x.Department
 
-            )).ToList();
+            )).ToListAsync();
             return obj;
         }
 
-        public Seller FindById(int id)
+        public async Task<Seller> FindByIdAsync(int id)
         {
-            return _vsproContext.Seller.Include(obj => obj.Department).FirstOrDefault(x => x.Id == id);
+            return await _vsproContext.Seller.Include(obj => obj.Department).FirstOrDefaultAsync(x => x.Id == id);
                // var obj = _vsproContext.Seller.Find(id);
-               // return obj;
+                
 
         }
 
-        public Seller Insert(Seller seller)
+        public async Task InsertAsync(Seller seller)
         {
             _vsproContext.Add(seller);
-            _vsproContext.SaveChanges();
-            return seller;
+           await _vsproContext.SaveChangesAsync();
+            
         }
 
-        public void Remove(int id)
+        public async Task RemoveAsync(int id)
         {
-            var obj = _vsproContext.Seller.Find(id);
+            var obj = await _vsproContext.Seller.FindAsync(id);
             _vsproContext.Remove(obj);
-            _vsproContext.SaveChanges();
+            await _vsproContext.SaveChangesAsync();
 
         }
 
-        public void Update(Seller seller)
+        public async Task UpdateAsync(Seller seller)
        {
-            if(!_vsproContext.Seller.Any(x => x.Id == seller.Id))
+            bool hasAny = await _vsproContext.Seller.AnyAsync(x => x.Id == seller.Id);
+
+            if(!hasAny)
             {
                 throw new NotFoundException("Error - Id not found");
             }
             try{
             _vsproContext.Update(seller);
-            _vsproContext.SaveChanges();
+           await _vsproContext.SaveChangesAsync();
             }catch(DbUpdateConcurrencyException e) 
             {
                 throw new DbConcurrencyException(e.Message);

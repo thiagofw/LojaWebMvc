@@ -14,15 +14,15 @@ public class DepartmentService: IDepartmentService
     {
         _vsproContext = vsproContext;
     }
- public List<Department> FindAll()
+ public async Task<List<Department>> FindAllAsync()
  {
     //return _vsproContext.Department.OrderBy(x => x.Name).ToList();
     var list = _vsproContext.Department;
     var obj = new List<Department>();
-    obj = list.Select(x => new Department(
+    obj = await list.Select(x => new Department(
         x.Id,
         x.Name  
-    )).ToList();
+    )).ToListAsync();
     return obj;
   }
 

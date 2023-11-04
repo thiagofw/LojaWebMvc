@@ -4,11 +4,11 @@ namespace LojaWebMvc.Services.Interfaces;
 
 public interface ISellerService
 {
-    List<Seller> FindAll();
-    Seller FindById(int id);
-    Seller Insert(Seller seller);
-    void Remove(int id);
-    void Update(Seller seller);
+    Task<List<Seller>> FindAllAsync();
+    Task<Seller> FindByIdAsync(int id);
+    Task InsertAsync(Seller seller);
+    Task RemoveAsync(int id);
+    Task UpdateAsync(Seller seller);
     
 
 }
