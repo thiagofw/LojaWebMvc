@@ -84,8 +84,14 @@ public class SellersController: Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
+        try{
         await _sellerService.RemoveAsync(id);
         return RedirectToAction(nameof(Index));
+        }
+        catch(IntegrityException e)
+        {
+            return RedirectToAction(nameof(Error), new {message = e.Message});
+        }
     }
     
     [HttpGet]

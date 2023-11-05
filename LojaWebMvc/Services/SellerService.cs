@@ -48,9 +48,15 @@ public class SellerService: ISellerService
 
         public async Task RemoveAsync(int id)
         {
+            try{
             var obj = await _vsproContext.Seller.FindAsync(id);
             _vsproContext.Remove(obj);
             await _vsproContext.SaveChangesAsync();
+            }
+            catch(DbUpdateException e)
+            {
+                throw new IntegrityException(e.Message);
+            }
 
         }
 
